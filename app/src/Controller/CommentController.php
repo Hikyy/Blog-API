@@ -15,7 +15,7 @@ class CommentController extends AbstractController
      * @return void
      */
     #[Route('/posts', name: "commentStore", methods: ["POST"])]
-    public function storeComment()
+    public function storeComment(): void
     {
         $user = (new Comment($_POST))
             ->setUser_Id($this->getUser()->getId())

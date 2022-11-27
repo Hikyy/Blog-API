@@ -24,7 +24,6 @@ class PostController extends AbstractController
         $postManager = new PostManager(new PDOFactory());
         $posts = $postManager->getAllPosts($this->getUser()->getId());
 
-
         return $this->render("home.php", [
             "posts" => $posts,
             "trucs" => "toto",
@@ -40,37 +39,41 @@ class PostController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws \Exception
-     */
+
     #[Route('/post', name: "store", methods: ["POST"])]
     public function storePost ()
     {
         $file = null;
-        if(isset($_FILES['image'])){
-            $tmpName = $_FILES['image']['tmp_name'];
-            $name = $_FILES['image']['name'];
-            $size = $_FILES['image']['size'];
-            $error = $_FILES['image']['error'];
-            $tabExtension = explode('.', $name);
-            $extension = strtolower(end($tabExtension));
-            $extensions = ['jpg', 'png', 'jpeg', 'gif'];
-            $maxSize = 40000000;
-            if(in_array($extension, $extensions) && $size <= $maxSize && $error == 0){
-                $uniqueName = uniqid('', true);
-                $file = $uniqueName.".".$extension;
-                move_uploaded_file($tmpName,'upload/'.$file);
-            }
+        if($this->getUser() !== null){
+            if(isset($_FILES['image'])){
+                $tmpName = $_FILES['image']['tmp_name'];
+                $name = $_FILES['image']['name'];
+                $size = $_FILES['image']['size'];
+                $error = $_FILES['image']['error'];
+                $tabExtension = explode('.', $name);
+                $extension = strtolower(end($tabExtension));
+                $extensions = ['jpg', 'png', 'jpeg', 'gif'];
+                $maxSize = 40000000;
+                if(in_array($extension, $extensions) && $size <= $maxSize && $error == 0){
+                    $uniqueName = uniqid('', true);
+                    $file = $uniqueName.".".$extension;
+                    move_uploaded_file($tmpName,'upload/'.$file);
+                }
 
-        };
+            };
 
-        $user = (new Post($_POST))
+            $user = (new Post($_POST))
                 ->setUser_Id($this->getUser()->getId())
                 ->setImage($file)
                 ->setCreated_At();
-        $manger = new PostManager(new PDOFactory());
-        $manger->insertPost($user);
-        Utilitaire::redirect('post');
+            $manger = new PostManager(new PDOFactory());
+            $manger->insertPost($user);
+            Utilitaire::redirect('post');
+        }
+        else{
+            Utilitaire::redirect('posts');
+        }
+
     }
 
     /**
