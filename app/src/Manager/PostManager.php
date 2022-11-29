@@ -19,7 +19,7 @@ class PostManager extends BaseManager
         $query->execute();
         $post = [];
         $comment = [];
-        return $this->relationshipComment($query);
+        return $this->relationshipUser($query);
     }
 
     /**
@@ -83,6 +83,20 @@ class PostManager extends BaseManager
             $union[$i]['comment'] = $comment->getAllCommentForOnePost($union[$i]['post']->getId());
             $i++;
 
+        }
+        return $union;
+    }
+
+    private function relationshipUser($query): array
+    {
+        $data = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $union = [];
+        $i = 0;
+        foreach($data as $post) {
+            $union[$i] = new Post($post);
+            $userManager = new UserManager(new PDOFactory());
+            $union[$i]->setRelationship($userManager->getById($post['user_id']));
+            $i++;
         }
         return $union;
     }

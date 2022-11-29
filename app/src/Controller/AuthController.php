@@ -17,12 +17,16 @@ class AuthController extends AbstractController
             $formUsername = $_POST['username'];
             $formPwd = $_POST['password'];
 
-            $user = (new User)->setUsername($formUsername);
             $userManager = (new UserManager(new PDOFactory()))
+<<<<<<< HEAD
                 ->getByUsername($formUsername)
                 ->setUsername($formUsername) ;
+=======
+                ->getByUsername($formUsername);
+            //$userManager->passwordMatch($formPwd);
+>>>>>>> 3b5f4a4a9c5350b6e48dbedece61d344a6349387
 
-            if (!$userManager) {
+            if (!$userManager->passwordMatch($formPwd)) {
                 Utilitaire::redirect('?error=notfound"');
                 exit;
             }
@@ -31,6 +35,10 @@ class AuthController extends AbstractController
                 $_SESSION['user'] = serialize($userManager);
 
                 Utilitaire::redirect('post');
+            }
+            else{
+                Utilitaire::redirect('login');
+                exit;
             }
         }
     }
@@ -56,10 +64,23 @@ class AuthController extends AbstractController
     #[Route('/register', name: "register", methods: ["POST"])]
     public function register(): void
     {
+<<<<<<< HEAD
         $formPwd = $_POST['password'];
         $user = (new User($_POST))->setAccess('User')->passwordHash($formPwd);
+=======
+        /** @var App\Entity\User $user */
 
-        $userManager = new UserManager(new PDOFactory());
-        $userManager->insertUser($user);
+        $user = (new User($_POST))->setAccess('User')->passwordHash($_POST['password']);
+
+        if($user->getUsername() && $user->getPassword() && $user->getEmail()){
+            $userManager = new UserManager(new PDOFactory());
+            $userManager->insertUser($user);
+            Utilitaire::redirect('post');
+        }
+        else{
+            Utilitaire::redirect('register');
+        }
+>>>>>>> 3b5f4a4a9c5350b6e48dbedece61d344a6349387
+
     }
 }
