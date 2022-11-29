@@ -20,7 +20,7 @@ class AuthController extends AbstractController
             $user = (new User)->setUsername($formUsername);
             $userManager = (new UserManager(new PDOFactory()))
                 ->getByUsername($formUsername)
-                ->setUsername($formUsername);
+                ->setUsername($formUsername) ;
 
             if (!$userManager) {
                 Utilitaire::redirect('?error=notfound"');
@@ -56,7 +56,8 @@ class AuthController extends AbstractController
     #[Route('/register', name: "register", methods: ["POST"])]
     public function register(): void
     {
-        $user = (new User($_POST))->setAccess('User');
+        $formPwd = $_POST['password'];
+        $user = (new User($_POST))->setAccess('User')->passwordHash($formPwd);
 
         $userManager = new UserManager(new PDOFactory());
         $userManager->insertUser($user);

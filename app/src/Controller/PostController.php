@@ -46,6 +46,7 @@ class PostController extends AbstractController
     #[Route('/post', name: "store", methods: ["POST"])]
     public function storePost ()
     {
+
         $file = null;
         if(isset($_FILES['image'])){
             $tmpName = $_FILES['image']['tmp_name'];
@@ -78,7 +79,7 @@ class PostController extends AbstractController
      * @return string
      */
     #[Route('/post/{id}', name: "showUpdate", methods: ["GET"])]
-    public function showUpdate($id)
+    public function showPost($id)
     {
         $postManager = new PostManager(new PDOFactory());
         $post = $postManager->getOnePosts((int)$id);
@@ -90,9 +91,38 @@ class PostController extends AbstractController
         ]);
     }
 
-    #[Route('/post/{id}', name: "store", methods: ["POST"])]
-    public function uupdate($id)
+    /**
+     * @param $id
+     * @return string
+     */
+    #[Route('/post/update/{id}', name: "store", methods: ["POST"])]
+    public function updatePost($id)
     {
-        var_dump($id);
+        $file = null;
+        if(isset($_FILES['image'])){
+            $tmpName = $_FILES['image']['tmp_name'];
+            $name = $_FILES['image']['name'];
+            $size = $_FILES['image']['size'];
+            $error = $_FILES['image']['error'];
+            $tabExtension = explode('.', $name);
+            $extension = strtolower(end($tabExtension));
+            $extensions = ['jpg', 'png', 'jpeg', 'gif'];
+            $maxSize = 40000000;
+            if(in_array($extension, $extensions) && $size <= $maxSize && $error == 0){
+                $uniqueName = uniqid('', true);
+                $file = $uniqueName.".".$extension;
+                move_uploaded_file($tmpName,'upload/'.$file);
+            }
+
+        };
+
+        $post=(new Post($_POST))
+            ->setUser_Id($this->getUser()->getId())
+            ->setImage($file)
+            ->setCreated_At();
+        $postManager = new PostManager(new PDOFactory());
+        $postManager->UpdatePost($post, (int)$id);
+        $base = dirname(__DIR__, 2);
+
     }
 }

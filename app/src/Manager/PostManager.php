@@ -54,6 +54,19 @@ class PostManager extends BaseManager
         $query->bindValue('image', $user->getImage(), \PDO::PARAM_STR);
         $query->execute();
     }
+    public function UpdatePost(Post $user , $id): void
+    {
+        $query = $this->pdo->prepare("UPDATE Post SET title=:title,content=:content, user_id=:user_id, created_at=:created_at, image=:image WHERE id=:id");
+        $query->bindValue('title', $user->getTitle(), \PDO::PARAM_STR);
+        $query->bindValue('content', $user->getContent(), \PDO::PARAM_STR);
+        $query->bindValue('user_id', $user->getUser_Id(), \PDO::PARAM_INT);
+        $query->bindValue('created_at', $user->getCreated_At(), \PDO::PARAM_STR);
+        $query->bindValue('image', $user->getImage(), \PDO::PARAM_STR);
+        $query->bindValue('id', $id , \PDO::PARAM_STR);
+        $query->execute();
+    }
+
+      
 
     /**
      * @param $query

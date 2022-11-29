@@ -17,5 +17,6 @@
 
 
     <?= $_pageContent; ?>
+    <script src="http://localhost:5656/views/Js/index.js"></script>
 </body>
 </html>
