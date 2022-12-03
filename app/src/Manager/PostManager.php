@@ -13,7 +13,7 @@ class PostManager extends BaseManager
      * @param int $user
      * @return array
      */
-    public function getAllPosts(int $user): array
+    public function getAllPosts(): array
     {
         $query = $this->pdo->prepare("SELECT * FROM `Post`");
         $query->execute();
@@ -99,5 +99,16 @@ class PostManager extends BaseManager
             $i++;
         }
         return $union;
+    }
+
+    public function deletePost($id)
+    {
+        $query = $this->pdo->prepare('DELETE FROM Post WHERE id = :id');
+
+        $query->bindValue(
+            "id", $id, \PDO::PARAM_STR
+        );
+
+        $query->execute();
     }
 }

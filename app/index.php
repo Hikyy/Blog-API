@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Utilitaire;
 use App\Route\Route;
 
 require_once 'vendor/autoload.php';
@@ -50,6 +51,7 @@ foreach ($routesObj as $route) {
     exit();
 }
 
-echo "NO MATCH";
+Utilitaire::redirect('posts');
+
 
 die;

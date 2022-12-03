@@ -37,16 +37,25 @@ class CommentManager extends BaseManager
         return $comment;
     }
 
-    public function insertComment(Comment $comment): void
+    public function insertComment(Comment $comment, $id): void
     {
         $query = $this->pdo->prepare("INSERT INTO Comment (user_id, post_id, response, created_at) VALUES (:user_id, :post_id,:response, :created_at)");
         $query->bindValue('user_id', $comment->getUser_Id(), \PDO::PARAM_INT);
-        $query->bindValue('post_id', $comment->getPost_Id(), \PDO::PARAM_INT);
+        $query->bindValue('post_id', $id, \PDO::PARAM_INT);
         $query->bindValue('response', $comment->getResponse(), \PDO::PARAM_STR);
         $query->bindValue('created_at', $comment->getCreated_At(), \PDO::PARAM_STR);
         $query->execute();
     }
 
+    public function selectComment($id): Comment
+    {
+        $query = $this->pdo->prepare("SELECT * FROM Comment WHERE Comment.id = :id");
+        $query->bindValue(':id', $id, \PDO::PARAM_INT);
+        $query->execute();
+        $comment = $query->fetch(\PDO::FETCH_ASSOC);
+        var_dump($comment);
+        return new Comment($comment);
+    }
 
     /**
      * @param $id
@@ -57,6 +66,13 @@ class CommentManager extends BaseManager
         $query = $this->pdo->prepare("SELECT * FROM Comment WHERE Comment.post_id = $id");
         $query->execute();
         return $query->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function deleteComment($id): void
+    {
+        $query = $this->pdo->prepare("DELETE FROM Comment WHERE id = :id");
+        $query->bindValue(':id', $id, \PDO::PARAM_INT);
+        $query->execute();
     }
 
 }

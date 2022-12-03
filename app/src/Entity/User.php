@@ -37,7 +37,7 @@ class User extends BaseEntity implements UserInterface, PasswordProtectedInterfa
      */
     public function setEmail(string $email): User
     {
-        $this->email = $email;
+        $this->email = htmlspecialchars($email);
         return $this;
     }
 
@@ -73,7 +73,7 @@ class User extends BaseEntity implements UserInterface, PasswordProtectedInterfa
      */
     public function setUsername(string $username): User
     {
-        $this->username = $username;
+        $this->username = htmlspecialchars($username);
         return $this;
     }
 
@@ -91,7 +91,7 @@ class User extends BaseEntity implements UserInterface, PasswordProtectedInterfa
      */
     public function setPassword(string $password): User
     {
-        $this->password = $password;
+        $this->password = htmlspecialchars($password);
         return $this;
     }
 
@@ -109,7 +109,7 @@ class User extends BaseEntity implements UserInterface, PasswordProtectedInterfa
      */
     public function setAccess(string $access): User
     {
-        $this->access = 'User';
+        $this->access = $access = 'on' ? 'Admin' : 'User';
         return $this;
     }
 
